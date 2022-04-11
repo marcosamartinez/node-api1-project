@@ -2,10 +2,31 @@ const express = require("express");
 const User = require("./users/model");
 const server = express();
 
+// server.post("/api/users", (req, res) => {
+//   let addUser = req.body;
+//   User.create(addUser).then((addUser) => {
+//     res.status(201).json(addUser);
+//   });
+// });
+
 server.get("/api/users", (req, res) => {
   User.find()
     .then((users) => {
-      throw new Error("arghhh!!!!!");
+      res.json(users);
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: "Users not found",
+        err: err.message,
+        stack: err.stack,
+      });
+    });
+});
+
+server.get("/api/users/:id", (req, res) => {
+  User.findById(req.params.id)
+    .then((user) => {
+      res.json(user);
     })
     .catch((err) => {
       res.status(500).json({
@@ -21,12 +42,5 @@ server.use("*", (req, res) => {
     message: "not found",
   });
 });
-
-// server.post("./api/users", (req, res) => {
-//   let addUser = req.body;
-//   Users.create(addUser).then((addUser) => {
-//     res.status(201).json(addUser);
-//   });
-// });
 
 module.exports = server; // EXPORT YOUR SERVER instead of {}
